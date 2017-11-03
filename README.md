@@ -24,7 +24,7 @@ To develop with automatic compilation and browser refreshing run
 gulp
 ```
 
-And see the result on http://localhost:3000/
+And see the result on http://localhost:8080/
 
 
 ## Build
