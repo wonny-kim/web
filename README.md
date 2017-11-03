@@ -87,4 +87,3 @@ You can use [surge.sh](https://surge.sh) free service for that.
 1. From now on run `gulp deploy` whenever you want to publish a new version.
 
 If you want multiple people to be able to deploy to the same domain, run `surge --add mail.your.collaborator.used.to.register.with.surge@example.com` for each.
- # web
