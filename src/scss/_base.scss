@@ -1,0 +1,302 @@
+@charset "utf-8";
+/* selector of entirety */
+* {
+}
+
+*:before, *:after {
+}
+
+/* selector of element */
+html {
+}
+
+body {
+}
+
+h1 {
+  font-weight:bold;
+}
+
+main > .jumbotron h1 {
+  display: block;
+  margin-bottom: 1.25rem;
+}
+
+footer {
+  margin-bottom: .5rem;
+  border-top: 1px solid rgba(0,0,0,.05);
+}
+
+pre {
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: .5rem
+}
+
+div > code {
+  vertical-align:middle;
+}
+
+code > mark {
+  padding-top: 0;
+  padding-bottom: 0;
+  border: 1px solid #000;
+}
+/* selector of class, attribute, virtual state */
+.dropdown-menu-login {
+  /* height: calc( 100vh - 10rem ); */
+}
+.card-body > .row {
+  margin: 1rem .5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.card-body .container {
+  margin-bottom: 1rem;
+  padding: 0;
+}
+
+.card-body span.box-square {
+  display:inline-block;
+  height: 7rem;
+  width: 7rem;
+}
+.card-body div.box {
+  height: 10rem;
+}
+
+.example {
+  margin: 1rem;
+}
+
+.example p,
+.example pre {
+  margin: 0;
+}
+
+.example > [class*='col'] {
+  padding: .5rem;
+}
+
+.navbar-brand {
+  border:1px solid rgba(255, 0, 0, 0.5);
+  border-radius: .25rem;
+  padding-right: .625rem;
+  padding-left: .625rem;
+  color: rgba(255, 0, 0, 0.5) !important;
+  text-shadow: 0 0 .125rem rgba(255, 0, 0, 0.5);
+  box-shadow: 0 0 0 .125rem rgba(255, 0, 0, 0.5);
+}
+.section-box {
+  border: 1px solid rgba(221, 221, 221, .86);
+  background-color: rgba(255, 193, 7, .2);
+  padding: 1.25rem;
+  border-radius: .25rem;
+}
+
+.sticky-top {
+  top: -.2rem;
+}
+
+/* carousel-fade */
+.carousel-fade .carousel-inner .item {
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 1s;
+  -webkit-transition-property: opacity;
+  -webkit-transition-duration: 1s;
+}
+
+.carousel-fade .carousel-inner .active {
+  opacity: 1;
+}
+
+.carousel-fade .carousel-inner .active.left,
+.carousel-fade .carousel-inner .active.right {
+  left: 0;
+  opacity: 0;
+  z-index: 1;
+}
+
+.carousel-fade .carousel-inner .next.left,
+.carousel-fade .carousel-inner .prev.right {
+  opacity: 1;
+}
+
+.carousel-fade .carousel-control {
+  z-index: 2;
+}
+
+/*
+  WHAT IS NEW IN 3.3: "Added transforms to improve carousel performance in modern browsers."
+  Need to override the 3.3 new styles for modern browsers & apply opacity
+*/
+/*
+@media all and (transform-3d), (-webkit-transform-3d) {
+    .carousel-fade .carousel-inner > .item.next,
+    .carousel-fade .carousel-inner > .item.active.right {
+      opacity: 0;
+      -webkit-transform: translate3d(0, 0, 0);
+              transform: translate3d(0, 0, 0);
+    }
+    .carousel-fade .carousel-inner > .item.prev,
+    .carousel-fade .carousel-inner > .item.active.left {
+      opacity: 0;
+      -webkit-transform: translate3d(0, 0, 0);
+              transform: translate3d(0, 0, 0);
+    }
+    .carousel-fade .carousel-inner > .item.next.left,
+    .carousel-fade .carousel-inner > .item.prev.right,
+    .carousel-fade .carousel-inner > .item.active {
+      opacity: 1;
+      -webkit-transform: translate3d(0, 0, 0);
+              transform: translate3d(0, 0, 0);
+    }
+  }
+*/
+/* selector of id */
+#sidemenu {
+
+}
+#sidemenu form.form_sidemenu {
+  position: relative;
+  padding: 1rem 1rem;
+  border-right: 1px solid rgba(0,0,0,.05);
+  border-bottom: 1px solid rgba(0,0,0,.05);
+}
+#sidemenu span.span-input {
+  display: block!important;
+  flex: 1;
+}
+#sidemenu-content .list-group {
+  width: 100%;
+}
+#sidemenu-content .nav-item {
+  display: block;
+}
+#sidemenu-content .nav-item:hover a
+{
+  background-color: rgba(255, 193, 7, .6);
+  color:rgba(0, 0, 0, .8);
+}
+
+#sidemenu-content .nav-item>a {
+  color: rgba(0, 0, 0, .65);
+}
+#sidemenu-content .nav-item>a.disabled {
+  background-color: rgba(0, 0, 0, .35);
+}
+#sidemenu-content .nav-item.active a
+{
+  background-color: rgba(255, 193, 7, 1);
+  color:rgba(0, 0, 0, 1);
+}
+#sidemenu > form #input-search:focus {
+  border-color: #7952b3;
+  box-shadow: 0 0 0 .2rem rgba(23, 162, 184, .25);
+}
+
+/* !important selector of entirety */
+/* !important selector of element */
+/* !important selector of class, attribute, virtual state */
+/* !important selector of id */
+
+
+
+/*
+ *  each page
+ */
+/* index page */
+[id*='tab-content-'] .row {
+  height: 12.5rem;
+  padding: .625rem;
+}
+
+.left-divider {
+  border-left: 1px solid #eee;
+}
+
+/* loding */
+#loader {
+  width: 10rem;
+  height: 10rem;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  margin: -5rem 0 0 -5rem;
+  display: none;
+}
+#loading-img {
+  border: 1rem solid rgba(33, 33, 33, 0.3);
+  border-radius: 50%;
+  border-top: 1rem solid #3498db;
+  width: 8rem;
+  height: 8rem;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+#loading-text {
+  width: 8rem;
+  height: 8rem;
+  line-height: 8rem;
+  position: relative;
+  left: 0;
+  top: -8rem;
+  z-index: 1;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: 800;
+}
+
+@-webkit-keyframes spin {
+  0% {
+      -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* media size over 768px */
+@media (min-width: 768px) {
+  #sidemenu {
+    padding: 0;
+    border-right: 1px solid rgba(0,0,0,.05);
+  }
+  #sidemenu-list {
+    height: calc(100vh - 11.45rem);
+    overflow-y: auto;
+  }
+  #main-content {
+    height: calc(100vh - 7rem);
+    overflow-y: auto;
+  }
+  footer {
+    padding-top: 1rem;
+  }
+}
+
+/* media size under 768px */
+@media (max-width: 768px) {
+  #sidemenu {
+    padding: 0;
+    border-bottom: 1px solid rgba(0,0,0,.05);
+  }
+  #sidemenu-list {
+  }
+  #main-content {
+  }
+  footer {
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+}

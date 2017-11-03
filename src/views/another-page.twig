@@ -1,0 +1,31 @@
+{% extends '../include/_base.twig' %}
+
+
+{% block title %}Another page{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <img class="img-fluid" src="/assets/img/dummy.png" alt="dummy image">
+            </div>
+            <div class="col p-4">
+                <h1>Another page</h1>
+                <p>Back to <a href="/">homepage</a></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 mt-5">
+                <h2>Color samples</h2>
+                <p>These color samples are generated from data provided in <code>color.json</code> file.</p>
+            </div>
+            {% for color in sampleColors %}
+                <div class="col mb-4">
+                    {{ color.name }}
+                    <div style="background-color: {{ color.value }};" class="w-100 py-5"></div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
