@@ -20,6 +20,10 @@ gulp.task('css:clean', function(){
     return del('dist/assets/css/master.css*' , { force: true });
 });
 
+gulp.task('public:css:clean', function(){
+    return del('public/assets/css/master.css*' , { force: true });
+});
+
 // CSS compilation (also deletes css files first using previously defined task)
 gulp.task('css:compile', ['css:clean'], function(){
     return gulp
@@ -52,15 +56,35 @@ gulp.task('css:compile', ['css:clean'], function(){
         .pipe(browserSync.stream()); // tell browsersync to reload CSS (injects compiled CSS)
 });
 
-// clean css of assets in public
-gulp.task('css:public-clean', function(){
-    return del('public/assets/css/master.css*' , { force: true });
-});
-
-// copy css to public's assets
-gulp.task('css:public', ['css:public-clean','css:compile'], function(){
-    return gulp.src('dist/assets/css/*')
-        .pipe(gulp.dest('public/assets/css'));
+// CSS compilation (also deletes css files first using previously defined task)
+gulp.task('public:css:compile', ['public:css:clean'], function(){
+    return gulp
+        .src('src/scss/master.scss') // this is the source of for compilation
+        .pipe(sass().on('error', sass.logError)) // compile sass to css and also tell us about a problem if happens
+        .pipe(sourcemaps.init()) // initalizes a sourcemap
+        .pipe(postcss([autoprefixer( // supported browsers (from Bootstrap 4 beta: https://github.com/twbs/bootstrap/blob/v4-dev/build/postcss.config.js)
+            //
+            // Official browser support policy:
+            // https://v4-alpha.getbootstrap.com/getting-started/browsers-devices/#supported-browsers
+            //
+            'Chrome >= 45', // Exact version number here is kinda arbitrary
+            'Firefox ESR',
+            // Note: Edge versions in Autoprefixer & Can I Use refer to the EdgeHTML rendering engine version,
+            // NOT the Edge app version shown in Edge's "About" screen.
+            // For example, at the time of writing, Edge 20 on an up-to-date system uses EdgeHTML 12.
+            // See also https://github.com/Fyrd/caniuse/issues/1928
+            'Edge >= 12',
+            'Explorer >= 10',
+            // Out of leniency, we prefix these 1 version further back than the official policy.
+            'iOS >= 9',
+            'Safari >= 9',
+            // The following remain NOT officially supported, but we're lenient and include their prefixes to avoid severely breaking in them.
+            'Android >= 4.4',
+            'Opera >= 30'
+        ), require('postcss-flexbugs-fixes')]))
+        .pipe(csso()) // compresses CSS
+        .pipe(sourcemaps.write('.')) // writes the sourcemap
+        .pipe(gulp.dest('./public/assets/css')); // destination of the resulting css
 });
 
 // delete all html files in dist/assets folder
@@ -79,21 +103,6 @@ gulp.task('html:compile', ['html:clean'], function(){
         });
 });
 
-// delete all php files in dist/assets folder
-gulp.task('php:clean', function(){
-    return del('dist/**/*.php', { force: true });
-});
-
-// PHP compilation from views
-gulp.task('php:compile', ['php:clean'], function(){
-    return gulp.src('src/views/**/*.twig')
-    // compile twig view to php files
-        .pipe(twig({ data: JSON.parse(fs.readFileSync('src/json/color.json')), debug: true, extname: '.php' })) // import from data.json
-        .pipe(gulp.dest('./dist/')) // where to put compiled PHP
-        .on('end', function(){ // after compilation finishes…
-            browserSync.reload() // … tell Browsersync to reload
-        });
-});
 
 // Static files cleanup
 gulp.task('static:clean', function(){
@@ -106,7 +115,18 @@ gulp.task('static:clean', function(){
     ], { force: true });
 });
 
-// copy dependancy js
+// Static files cleanup
+gulp.task('public:static:clean', function(){
+    return del([
+        'public/assets/**/*', // delete all files from src
+        '!public/assets/**/*.php', // except php files
+        '!public/assets/**/*.html', // except html files
+        '!public/assets/css/master.*', // and css
+        '!public/assets/**/*.map' // and sourcemaps
+    ], { force: true });
+});
+
+// copy dependancy js from node_module
 gulp.task('static:copy-js',['static:clean'], function(){
     return gulp.src([
 			'node_modules/bootstrap/dist/js/bootstrap.min.*',
@@ -114,6 +134,16 @@ gulp.task('static:copy-js',['static:clean'], function(){
 			'node_modules/jquery/dist/jquery.min.*',
       'node_modules/history.js/history.js'])
         .pipe(gulp.dest('dist/assets/js'));
+});
+
+// copy dependancy js from node_module
+gulp.task('public:static:copy-js',['public:static:clean'], function(){
+    return gulp.src([
+			'node_modules/bootstrap/dist/js/bootstrap.min.*',
+			'node_modules/popper.js/dist/umd/popper.min.*',
+			'node_modules/jquery/dist/jquery.min.*',
+      'node_modules/history.js/history.js'])
+        .pipe(gulp.dest('public/assets/js'));
 });
 
 // copy everything to static folder
@@ -125,22 +155,19 @@ gulp.task('static:copy', ['static:copy-js'], function(){
         });
 });
 
-// copy static to public's assets
-gulp.task('static:public', ['static:copy'],function(){
-    return gulp.src('dist/assets/**/*')
+// copy everything to static folder
+gulp.task('public:static:copy', ['public:static:copy-js'], function(){
+    return gulp.src('src/static/**/*')
         .pipe(gulp.dest('public/assets'));
 });
 
+
 // build everything
-gulp.task('php:build', ['css:compile', 'php:compile', 'static:copy']);
+gulp.task('public:build', ['public:css:compile', 'public:static:copy']);
 gulp.task('build', ['css:compile', 'html:compile', 'static:copy']);
 
-// copy to public after build everything
-gulp.task('php:public', ['css:public', 'php:compile', 'static:public']);
-gulp.task('public', ['css:public', 'html:compile', 'static:public']);
-
 // development with automatic refreshing
-gulp.task('develop', ['public'], function(){
+gulp.task('develop', ['build'], function(){
     browserSync.init({ // initalize Browsersync
         // set what files be served
         server: {
@@ -166,28 +193,8 @@ gulp.task('develop', ['public'], function(){
 });
 
 // development with automatic refreshing
-gulp.task('php:develop', ['php:public'], function(){
-    browserSync.init({ // initalize Browsersync
-        // set what files be served
-        server: {
-            baseDir: 'dist', // serve from this folder
-            serveStaticOptions: {
-                // trying a extension when one isn't specified:
-                // effectively means that http://localhost:3000/another-page shows another-page.php
-                extensions: ['php']
-            }
-        },
-		ui: {
-			port: 8080,
-			weinre: {
-				port :9090
-			}
-		}
-    });
+gulp.task('public', ['public:bulid'], function(){
     gulp.watch('src/scss/**/*', ['css:public']); // watch for changes in scss
-    gulp.watch('src/json/**/*', ['php:compile']); // watch for changes in scss
-    gulp.watch('src/views/**/*', ['php:compile']); // watch for changes in views
-    gulp.watch('src/include/**/*', ['php:compile']); // watch for changes in include
     gulp.watch('src/static/**/*', ['static:public']); // watch for changes in static files
 });
 
@@ -200,5 +207,4 @@ gulp.task('deploy', ['build'], function(){
 });
 
 // set develop as a default task (gulp runs this when you don't specify a task)
-gulp.task('php', ['php:develop']);
 gulp.task('default', ['develop']);
