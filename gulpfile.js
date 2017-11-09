@@ -11,6 +11,7 @@ var csso = require('gulp-csso');
 var twig = require('gulp-twig');
 var fs = require('fs');
 var surge = require('gulp-surge');
+var rename = require('gulp-rename');
 
 
 // Now define some tasks
@@ -20,12 +21,12 @@ gulp.task('css:clean', function(){
     return del('dist/assets/css/master.css*' , { force: true });
 });
 
-gulp.task('public:css:clean', function(){
-    return del('public/assets/css/master.css*' , { force: true });
+gulp.task('public:css:clean', function() {
+    return del('public/assets/css/master.css*', { force: true });
 });
 
 // CSS compilation (also deletes css files first using previously defined task)
-gulp.task('css:compile', ['css:clean'], function(){
+gulp.task('css:compile', ['css:clean'], function() {
     return gulp
         .src('src/scss/master.scss') // this is the source of for compilation
         .pipe(sass().on('error', sass.logError)) // compile sass to css and also tell us about a problem if happens
@@ -83,7 +84,7 @@ gulp.task('public:css:compile', ['public:css:clean'], function(){
             'Opera >= 30'
         ), require('postcss-flexbugs-fixes')]))
         .pipe(csso()) // compresses CSS
-        .pipe(sourcemaps.write('.')) // writes the sourcemap
+        .pipe(sourcemaps.write('./public/assets/css')) // writes the sourcemap
         .pipe(gulp.dest('./public/assets/css')); // destination of the resulting css
 });
 
@@ -121,7 +122,8 @@ gulp.task('public:static:clean', function(){
         'public/assets/**/*', // delete all files from src
         '!public/assets/**/*.php', // except php files
         '!public/assets/**/*.html', // except html files
-        '!public/assets/css/master.*', // and css
+        '!public/assets/css',
+        '!public/assets/css/master.*', // except master.css
         '!public/assets/**/*.map' // and sourcemaps
     ], { force: true });
 });
@@ -185,17 +187,19 @@ gulp.task('develop', ['build'], function(){
 			}
 		}
     });
-    gulp.watch('src/scss/**/*', ['css:public']); // watch for changes in scss
+    gulp.watch('src/scss/**/*', ['css:compile']); // watch for changes in scss
     gulp.watch('src/json/**/*', ['html:compile']); // watch for changes in scss
     gulp.watch('src/views/**/*', ['html:compile']); // watch for changes in views
     gulp.watch('src/include/**/*', ['html:compile']); // watch for changes in include
-    gulp.watch('src/static/**/*', ['static:public']); // watch for changes in static files
+    gulp.watch('src/static/**/*', ['static:copy']); // watch for changes in static files
 });
 
+
+
 // development with automatic refreshing
-gulp.task('public', ['public:bulid'], function(){
-    gulp.watch('src/scss/**/*', ['css:public']); // watch for changes in scss
-    gulp.watch('src/static/**/*', ['static:public']); // watch for changes in static files
+gulp.task('public', ['public:build'], function(){
+    gulp.watch('src/scss/**/*', ['public:realtime']); // watch for changes in scss
+    gulp.watch('src/static/**/*', ['public:static:copy']); // watch for changes in static files
 });
 
 // deployment to surge.sh

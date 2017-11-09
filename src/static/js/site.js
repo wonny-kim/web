@@ -21,6 +21,16 @@ function init(group,page,is_ajax) {
     /*
         init function is not ajax
     */
+    // add popover
+    $('[data-toggle="popover"]').popover({html:true,trigger:"click",container:"body", placement:"auto"});
+    // add tooltip
+    $('[data-toggle="tooltip"]').tooltip({container:"body", placement:"auto"});
+    // custom-file-iput
+    $("input.custom-file-input").change(function() {
+      var path = $(this).val().split('\\');
+      var name = (path.length > 0)?path[path.length-1]:'';
+      $(this).parent().find("span.custom-file-control").html(name);
+    });
   }
   else {
     /*
@@ -46,11 +56,6 @@ function init(group,page,is_ajax) {
 
   }
 
-  /* public action */
-  // add popover
-  $('[data-toggle="popover"]').popover({html:true,trigger:"click",container:"body", placement:"auto"});
-  // add tooltip
-  $('[data-toggle="tooltip"]').tooltip({container:"body", placement:"auto top"});
 
   cookies.group.setCookie("group",group, {"expire_hour":1});
   cookies.page.setCookie("page",page, {"expire_hour":1});
@@ -150,18 +155,35 @@ function show_html(type, group, page) {
       $("#loader").css("display","block");
     },
     complete: function() {
-      $("#loader").css("display","none");
-      Holder.addTheme(
-        "dark",
-        {
-          bg: "black",
-          fg: "white",
-          size: 8
+      if(type !== "main") {
+        $("#loader").css("display","none");
+        Holder.addTheme(
+          "dark",
+          {
+            bg: "black",
+            fg: "white",
+            size: 8
+          }
+        ).run();
+        if(page === "carousel") {
+          $('#carousel-1').carousel({interval: 1000, ride: "carousel"});
+          $('#carousel-2').carousel({interval: 2000, ride: "carousel-fade"});
         }
-      ).run();
-      if(page === "carousel") {
-        $('#carousel-1').carousel({interval: 1000, ride: "carousel"});
-        $('#carousel-2').carousel({interval: 2000, ride: "carousel-fade"});
+
+        // add popover
+        $('[data-toggle="popover"]').popover({html:true,trigger:"click",container:"body", placement:"auto"});
+        // add tooltip
+        $('[data-toggle="tooltip"]').tooltip({container:"body", placement:"auto"});
+        //add scroll-spy
+        var t_scroll_spy = $('[data-spy="scroll"]');
+        t_scroll_spy.scrollspy({ target: '#'+t_scroll_spy.siblings('nav').prop('id') });
+        
+        // custom-file-iput
+        $("input.custom-file-input").change(function() {
+          var path = $(this).val().split('\\');
+          var name = (path.length > 0)?path[path.length-1]:'';
+          $(this).parent().find("span.custom-file-control").html(name);
+        });
       }
     },
     error: function(e) {
